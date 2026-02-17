@@ -19,6 +19,15 @@ public class App {
         // Lecture des produits
         lireProduits(emf);
 
+        //Mise a jour du prix d'un produit
+        mettreAJourPrix(emf, 2L, new BigDecimal("549.99"));
+
+        //Suppression d'un produit
+        supprimerProduit(emf, 3L);
+
+        //Recherche par prix
+        rechercheParPrix(emf, new BigDecimal("300"), new BigDecimal("1000"));
+
         // Fermeture de l'EntityManagerFactory
         emf.close();
     }
@@ -74,5 +83,75 @@ public class App {
             em.close();
         }
     }
+
+    private static void mettreAJourPrix(EntityManagerFactory emf, Long produitId, BigDecimal nouveauPrix) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // On récupère le produit par ID
+            Produit produit = em.find(Produit.class, produitId);
+            if (produit != null) {
+                produit.setPrix(nouveauPrix); // on change le prix
+                System.out.println("Prix mis à jour pour : " + produit);
+            } else {
+                System.out.println("Produit non trouvé");
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+    private static void supprimerProduit(EntityManagerFactory emf, Long produitId) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            Produit produit = em.find(Produit.class, produitId);
+            if (produit != null) {
+                em.remove(produit);
+                System.out.println("Produit supprimé : " + produit);
+            } else {
+                System.out.println("Produit non trouvé");
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+    private static void rechercheParPrix(EntityManagerFactory emf, BigDecimal min, BigDecimal max) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Produit> produits = em.createQuery(
+                            "SELECT p FROM Produit p WHERE p.prix BETWEEN :min AND :max", Produit.class)
+                    .setParameter("min", min)
+                    .setParameter("max", max)
+                    .getResultList();
+
+            System.out.println("\nProduits avec prix entre " + min + " et " + max + " :");
+            for (Produit p : produits) {
+                System.out.println(p);
+            }
+        } finally {
+            em.close();
+        }
+    }
+
+
+
 
 }
