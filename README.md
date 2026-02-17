@@ -89,12 +89,13 @@ Pour aller plus loin, j'ai étendu le projet avec :
 
 1. Une méthode pour **mettre à jour le prix d'un produit**  
 2. Une méthode pour **supprimer un produit**  
-3. Une nouvelle entité **Categorie** et établir une relation **ManyToOne** entre `Produit` et `Categorie`  
+3. Une nouvelle entité **Categorie** avec une relation **ManyToOne** entre `Produit` et `Categorie`  
 4. Une méthode pour **rechercher les produits par plage de prix**
 
 ## Auteur
 - Nom : Malak El Mallouky
 - Filliere : SIR
+
 
 
 
